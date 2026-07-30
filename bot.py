@@ -20,7 +20,7 @@ from telegram.ext import (
 # BOT TOKEN
 # ==========================
 
-TOKEN = ("8979623107:AAFX2uGlbA6pL4D8K87ca7BU_OCs3a-EirQ")
+TOKEN = os.getenv("TOKEN")
 
 DB_FILE = "database.json"
 
