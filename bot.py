@@ -279,7 +279,7 @@ def main():
 
     print("🤖 Bot Started...")
 
-    app.run_polling(close_loop=False)
+    app.run_polling()
 
 
 if __name__ == "__main__":
