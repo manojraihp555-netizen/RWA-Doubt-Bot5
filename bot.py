@@ -14,7 +14,8 @@ from telegram.ext import (
 # ==========================
 # BOT TOKEN
 # ==========================
-TOKEN = os.getenv("TOKEN", "8979623107:AAGaCkVuen7mA183aXfRtYgQK3Rz9CPAWaU")
+
+TOKEN = os.getenv("8979623107:AAFX2uGlbA6pL4D8K87ca7BU_OCs3a-EirQ")
 
 DB_FILE = "database.json"
 
@@ -34,11 +35,11 @@ def load_db():
     except Exception:
         return {}
 
+db = load_db()
+
 def save_db():
     with open(DB_FILE, "w", encoding="utf-8") as f:
         json.dump(db, f, indent=4, ensure_ascii=False)
-
-db = load_db()
 
 # ==========================
 # ADMIN CHECK
@@ -54,8 +55,7 @@ async def is_admin(update, context):
         ChatMemberStatus.ADMINISTRATOR,
         ChatMemberStatus.OWNER,
     )
-
-# ==========================
+    # ==========================
 # BASIC COMMANDS
 # ==========================
 
@@ -66,10 +66,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def rules(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
-        db.get(
-            "rules",
-            "📜 No rules added yet."
-        )
+        db.get("rules", "📜 No rules added yet.")
     )
 
 # ==========================
@@ -81,10 +78,7 @@ async def setrules(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await is_admin(update, context):
         return
 
-    text = update.message.text.replace(
-        "/setrules",
-        ""
-    ).strip()
+    text = update.message.text.replace("/setrules", "").strip()
 
     if not text:
         await update.message.reply_text(
@@ -93,14 +87,12 @@ async def setrules(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     db["rules"] = text
-
     save_db()
 
-    await update.message.reply_text(
-        "✅ Rules Updated."
-    )
-    # ==========================
-# SET WELCOME MESSAGE
+    await update.message.reply_text("✅ Rules Updated.")
+
+# ==========================
+# SET WELCOME
 # ==========================
 
 async def setwelcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -108,10 +100,7 @@ async def setwelcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await is_admin(update, context):
         return
 
-    text = update.message.text.replace(
-        "/setwelcome",
-        ""
-    ).strip()
+    text = update.message.text.replace("/setwelcome", "").strip()
 
     if not text:
         await update.message.reply_text(
@@ -120,15 +109,12 @@ async def setwelcome(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     db["welcome"] = text
-
     save_db()
 
-    await update.message.reply_text(
-        "✅ Welcome Message Updated."
-    )
+    await update.message.reply_text("✅ Welcome Message Updated.")
 
 # ==========================
-# SET EXIT MESSAGE
+# SET EXIT
 # ==========================
 
 async def setexit(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -136,10 +122,7 @@ async def setexit(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await is_admin(update, context):
         return
 
-    text = update.message.text.replace(
-        "/setexit",
-        ""
-    ).strip()
+    text = update.message.text.replace("/setexit", "").strip()
 
     if not text:
         await update.message.reply_text(
@@ -148,15 +131,12 @@ async def setexit(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     db["exit"] = text
-
     save_db()
 
-    await update.message.reply_text(
-        "✅ Exit Message Updated."
-    )
+    await update.message.reply_text("✅ Exit Message Updated.")
 
 # ==========================
-# SET REMOVE MESSAGE
+# SET REMOVE
 # ==========================
 
 async def setremove(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -164,10 +144,7 @@ async def setremove(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not await is_admin(update, context):
         return
 
-    text = update.message.text.replace(
-        "/setremove",
-        ""
-    ).strip()
+    text = update.message.text.replace("/setremove", "").strip()
 
     if not text:
         await update.message.reply_text(
@@ -176,13 +153,11 @@ async def setremove(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     db["remove"] = text
-
     save_db()
 
-    await update.message.reply_text(
-        "✅ Remove Message Updated."
-    )
-    # ==========================
+    await update.message.reply_text("✅ Remove Message Updated.")
+
+# ==========================
 # MEMBER UPDATE
 # ==========================
 
@@ -197,16 +172,12 @@ async def member_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
     name = user.mention_html()
 
     # Welcome
-    if old_status in (
-        ChatMemberStatus.LEFT,
-        ChatMemberStatus.BANNED,
-    ) and new_status == ChatMemberStatus.MEMBER:
+    if (
+        old_status in (ChatMemberStatus.LEFT, ChatMemberStatus.BANNED)
+        and new_status == ChatMemberStatus.MEMBER
+    ):
 
-        text = db.get(
-            "welcome",
-            "🎉 Welcome {name}"
-        )
-
+        text = db.get("welcome", "🎉 Welcome {name}")
         text = text.replace("{name}", name)
 
         await context.bot.send_message(
@@ -215,17 +186,13 @@ async def member_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="HTML",
         )
 
-    # Left
+    # Exit
     elif (
         old_status == ChatMemberStatus.MEMBER
         and new_status == ChatMemberStatus.LEFT
     ):
 
-        text = db.get(
-            "exit",
-            "👋 {name} left the group."
-        )
-
+        text = db.get("exit", "👋 {name} left the group.")
         text = text.replace("{name}", name)
 
         await context.bot.send_message(
@@ -240,11 +207,7 @@ async def member_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
         and new_status == ChatMemberStatus.BANNED
     ):
 
-        text = db.get(
-            "remove",
-            "🚫 {name} was removed."
-        )
-
+        text = db.get("remove", "🚫 {name} was removed.")
         text = text.replace("{name}", name)
 
         await context.bot.send_message(
@@ -253,18 +216,21 @@ async def member_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
             parse_mode="HTML",
         )
 
-
 # ==========================
 # MAIN
 # ==========================
 
 def main():
 
+    if not TOKEN:
+        raise RuntimeError(
+            "TOKEN environment variable is missing."
+        )
+
     app = Application.builder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("rules", rules))
-
     app.add_handler(CommandHandler("setrules", setrules))
     app.add_handler(CommandHandler("setwelcome", setwelcome))
     app.add_handler(CommandHandler("setexit", setexit))
@@ -280,7 +246,6 @@ def main():
     print("🤖 Bot Started...")
 
     app.run_polling()
-
 
 if __name__ == "__main__":
     main()
