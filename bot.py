@@ -9,7 +9,7 @@ from telegram.ext import (
 )
 from telegram.constants import ChatMemberStatus
 
-TOKEN = "YOUR_BOT_TOKEN"
+TOKEN = 8979623107:AAE3Z6kKIR7MnRFwMsVHAMF_7t_UlFeEhzw
 
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
