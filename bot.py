@@ -170,18 +170,24 @@ async def setremove(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def member_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
+    logging.info("===== MEMBER UPDATE =====")
+    logging.info(update.chat_member)
+
     chat_member = update.chat_member
 
     old_status = chat_member.old_chat_member.status
     new_status = chat_member.new_chat_member.status
 
+    logging.info(f"Old Status: {old_status}")
+    logging.info(f"New Status: {new_status}")
+
     user = chat_member.new_chat_member.user
     name = user.mention_html()
 
     # Welcome
-    if (
-        old_status in (ChatMemberStatus.LEFT, ChatMemberStatus.BANNED)
-        and new_status == ChatMemberStatus.MEMBER
+    if old_status in (ChatMemberStatus.LEFT, ChatMemberStatus.BANNED) and new_status in (
+        ChatMemberStatus.MEMBER,
+        ChatMemberStatus.ADMINISTRATOR,
     ):
 
         text = db.get("welcome", "🎉 Welcome {name}")
@@ -194,10 +200,10 @@ async def member_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     # Exit
-    elif (
-        old_status == ChatMemberStatus.MEMBER
-        and new_status == ChatMemberStatus.LEFT
-    ):
+    elif old_status in (
+        ChatMemberStatus.MEMBER,
+        ChatMemberStatus.ADMINISTRATOR,
+    ) and new_status == ChatMemberStatus.LEFT:
 
         text = db.get("exit", "👋 {name} left the group.")
         text = text.replace("{name}", name)
@@ -209,10 +215,10 @@ async def member_update(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     # Removed
-    elif (
-        old_status == ChatMemberStatus.MEMBER
-        and new_status == ChatMemberStatus.BANNED
-    ):
+    elif old_status in (
+        ChatMemberStatus.MEMBER,
+        ChatMemberStatus.ADMINISTRATOR,
+    ) and new_status == ChatMemberStatus.BANNED:
 
         text = db.get("remove", "🚫 {name} was removed.")
         text = text.replace("{name}", name)
@@ -252,11 +258,9 @@ def main():
 
     print("🤖 Bot Started...")
 
-    # Railway ke liye allowed_updates zaroori hai taaki join/leave events track ho sakein
     app.run_polling(
-        allowed_updates=[
-            Update.ALL_TYPES,
-        ]
+        allowed_updates=Update.ALL_TYPES,
+        drop_pending_updates=True,
     )
 
 if __name__ == "__main__":
