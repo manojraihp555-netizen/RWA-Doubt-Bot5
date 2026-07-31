@@ -7,6 +7,7 @@ try:
     asyncio.get_event_loop()
 except RuntimeError:
     asyncio.set_event_loop(asyncio.new_event_loop())
+
 from telegram import Update
 from telegram.constants import ChatMemberStatus
 from telegram.ext import (
@@ -60,7 +61,8 @@ async def is_admin(update, context):
         ChatMemberStatus.ADMINISTRATOR,
         ChatMemberStatus.OWNER,
     )
-    # ==========================
+
+# ==========================
 # BASIC COMMANDS
 # ==========================
 
@@ -250,7 +252,12 @@ def main():
 
     print("🤖 Bot Started...")
 
-    app.run_polling()
+    # Railway ke liye allowed_updates zaroori hai taaki join/leave events track ho sakein
+    app.run_polling(
+        allowed_updates=[
+            Update.ALL_TYPES,
+        ]
+    )
 
 if __name__ == "__main__":
     main()
